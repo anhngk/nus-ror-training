@@ -1,6 +1,7 @@
 $(document).ready(function() {
 
 	var result = 0;
+	var screenDisplay = '';
 	var firstInput = '';
 	var secondInput = '';
 	var operator = '';
@@ -14,6 +15,7 @@ $(document).ready(function() {
 		firstInput = '';
 		secondInput = '';
 		operator = '';
+		screenDisplay = '';
 	}
 
 	function calculate (a,b,operator) {
@@ -39,15 +41,22 @@ $(document).ready(function() {
 
 	display(result);
 
-	$('select').click(function(){
-		var str = $(this).val();
-		var paramsArr = str.split(" ");
-		calculate(paramsArr[0],paramsArr[2],paramsArr[1]);
-	});
-
 	$('.button').click(function(){
 		var btn = $(this);
 		var val = btn.text();
+
+		$('select').click(function(){
+			var str = $(this).val();
+			console.log(str);
+			if (str != null){
+				var paramsArr = str.split(" ");
+				firstInput = paramsArr[0];
+				secondInput = paramsArr[2];
+				operator = paramsArr[1];
+				display(firstInput + operator + secondInput);
+			} else
+				display(result);
+		});
 
 
 		if (result != 0 && firstInput != '' && secondInput != '')
@@ -61,16 +70,17 @@ $(document).ready(function() {
 		if (!btn.hasClass('op-btn') ) {
 			if (operator != '') {
 				secondInput += val;
-				display(secondInput);
+				display(screenDisplay += val);
 			}
 			else if (!btn.hasClass('clear')) {
 				firstInput += val;
-				display(firstInput);
+				display(screenDisplay += val);
 			}
 		}
 		else {
 			if (val != '=') {
 				operator = val;
+				display(screenDisplay += operator);
 			} else if (val == '=') {
 				calculate(firstInput, secondInput, operator);
 				if (firstInput != '' && secondInput != '' && operator != '') {

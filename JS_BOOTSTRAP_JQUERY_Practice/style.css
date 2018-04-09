@@ -1,5 +1,5 @@
 .app-wrapper {
-	margin-top:  50px;
+	margin-top:  30px;
 }
 
 .calculator {
@@ -12,7 +12,7 @@
 
 h1 {
 	text-align: center;
-	margin-bottom: 50px
+	margin-bottom: 20px
 }
 
 .io-field input {
@@ -46,6 +46,10 @@ h1 {
 	transform:  scale(0.8);
 	transition: all 0.2s ease;
 	background-color: #1a66ff;
+}
+
+select:hover {
+	transform: none !important;
 }
 
 #expand-btn {
