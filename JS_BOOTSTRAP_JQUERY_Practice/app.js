@@ -45,46 +45,49 @@ $(document).ready(function() {
 		var btn = $(this);
 		var val = btn.text();
 
-		$('select').click(function(){
-			var str = $(this).val();
-			console.log(str);
-			if (str != null){
-				var paramsArr = str.split(" ");
-				firstInput = paramsArr[0];
-				secondInput = paramsArr[2];
-				operator = paramsArr[1];
-				display(firstInput + operator + secondInput);
-			} else
+		if ( val != '') {
+			$('select').click(function(){
+				var str = $(this).val();	
+				if (str != ''){
+					var paramsArr = str.split(" ");
+					firstInput = paramsArr[0];
+					secondInput = paramsArr[2];
+					operator = paramsArr[1];
+					display(firstInput + operator + secondInput);
+				} else {
+					clearResult();
+					display(result);
+				}
+			});
+
+
+			if (result != 0 && firstInput != '' && secondInput != '')
+				clearResult();
+
+			if (btn.hasClass('clear')) {
+				clearResult();
 				display(result);
-		});
-
-
-		if (result != 0 && firstInput != '' && secondInput != '')
-			clearResult();
-
-		if (btn.hasClass('clear')) {
-			clearResult();
-			display(result);
-		}
-
-		if (!btn.hasClass('op-btn') ) {
-			if (operator != '') {
-				secondInput += val;
-				display(screenDisplay += val);
 			}
-			else if (!btn.hasClass('clear')) {
-				firstInput += val;
-				display(screenDisplay += val);
+
+			if (!btn.hasClass('op-btn')) {
+				if (operator != '') {
+					secondInput += val;
+					display(screenDisplay += val);
+				}
+				else if (!btn.hasClass('clear')) {
+					firstInput += val;
+					display(screenDisplay += val);
+				}
 			}
-		}
-		else {
-			if (val != '=') {
-				operator = val;
-				display(screenDisplay += operator);
-			} else if (val == '=') {
-				calculate(firstInput, secondInput, operator);
-				if (firstInput != '' && secondInput != '' && operator != '') {
-					$('.calc-history').prepend("<option>" + firstInput + " " + operator + " " + secondInput + "</option>");
+			else {
+				if (val != '=') {
+					operator = val;
+					display(screenDisplay += operator);
+				} else if (val == '=') {
+					calculate(firstInput, secondInput, operator);
+					if (firstInput != '' && secondInput != '' && operator != '') {
+						$('.calc-history').prepend("<option>" + firstInput + " " + operator + " " + secondInput + "</option>");
+					}
 				}
 			}
 		}
