@@ -5,7 +5,9 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Hotel Info Form</title>
 		<link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
-		<link rel="stylesheet" href="./style.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<link rel="stylesheet" type="text/css" href="./css/bootstrap-datepicker.min.css">
+		<link rel="stylesheet" href="./css/style.css">
 		<script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
 	</head>
 	<body>
@@ -26,10 +28,10 @@
 			<div id="right-col">
 				<h2 class="col-title">PERSONAL INFO</h2>
 				<form id="info-form" >
-					<input type="text" name="first-name" placeholder="First Name">
-					<input type="text" name="last-name" placeholder="Last Name">
+					<input type="text" name="firstname" placeholder="First Name">
+					<input type="text" name="lastname" placeholder="Last Name">
 					<input type="email" name="email" placeholder="Email">
-					<input type="date" name="birthday" placeholder="mm/dd/yyyy">
+					<input type="text" name="birthday" placeholder="mm/dd/yyyy" class="datepicker">
 					<select name="gender">
 						<option value="" disabled selected >Gender</option>
 						<option value="male">Male</option>
@@ -47,6 +49,11 @@
 		</div>
 		<footer class="footer">
 			<p>&copy; 2017 Hotel Info Form. All rights reserved | Design by <strong>W3layouts</strong></p>
-		</footer
+		</footer>
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<script src="./js/bootstrap-datepicker.min.js" type="text/javascript" charset="utf-8" async defer></script>
+		<script src="./js/app.js" type="text/javascript" charset="utf-8" async defer></script>
 	</body>
 </html>
