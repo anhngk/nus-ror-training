@@ -9,6 +9,8 @@ CSS Selector :
 -	[attribute ^= valueA] : 
 -	[attribute $= valueA] : Select các element có gía trị kết thúc bằng valueA
 
+
+
 :active
 :checked
 :disabled

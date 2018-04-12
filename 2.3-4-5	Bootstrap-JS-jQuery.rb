@@ -47,5 +47,37 @@ Requirement
 -	Compare function : function(a,b){ return a-b}
 -	Array Sort
 -	5 Datatype contain values : string/number/boolean/object/function
--	3 types of objects : Object/Date/Array
--	2 Datatype can not contain data : null / undefined 
+-	3 types of objects : Object/Date/Array (Maths/RegExp)
+-	2 Datatype can not contain data : null / undefined
+
+------------------------------------------------------
+	2.4 Bootstrap
+-	< 576px < 768px < 992px < 1200px <
+-	.no-gutters Columns have horizontal padding to create the gutters between individual columns, however, you can remove the margin from rows and padding from columns with .no-gutters on the .row.
+
+
+------------------------------------------------------
+	2.5 jQuery
+
+-	jQuery Effects :
+	+	Hide/Show : hide()/show()/toggle()
+	+	Fade : fadeIn()/fadeOut()/fadeToggle()/fadeTo() : fadeTo an give opacity
+
+-	Different between : on - bind - delegate
+	+ bind : Chỉ có tác dụng với các thẻ đang tồn tại trong trang, không có tác dụng cho các thẻ được thêm vào
+	
+-	jQuery DOM Manipulation Methods : append() / before() / after() / prepend() / append() / remove() / replaceAll() / wrap()
+
+	jQuery AJAX
+
+-	dataType : xml / json / jsonp / text / script / html
+-	Method : GET - POST - PUT
+-	async : Asynchronus (default : true) / Synchronus
+-	Callbacks : success/error/complete/beforeSend/
+
+-	Lấy ra các div có thứ tự là bội của 3 : $('div:nth-child(3n)')
+-	Lấy ra div kế cuối : $('div:last-child(2)')
+-	$('form').valid()
+
+var object = {firstName: 'Anh', lastName: 'Nguyen', fullName(){ return this.firstName + " " + this.lastName; }};
+
