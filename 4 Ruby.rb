@@ -104,11 +104,11 @@ a = func1 && func2
 b == 1 && puts("dsdsdsadadadsa")
 
 Class con kế thừa toàn bộ lớp cha (kể cả private)
-Khong co operator ++
-Khong co overload
+Không có operator ++
+Không có overload
 
 Mảng sort theo độ tuổi tăng dần - gỉam dần
-Person.map do -> loop qua các phần tử trong mảng lấy ra 1 thuộc tính
+Person.map loop qua mảng -> thực thi -> trả về mảng mới trong block
 Exception
 
 module ABC
