@@ -207,3 +207,29 @@ size sẽ kiểm tra xem object đã được load lên chưa, nếu true => tr�
 
 distinct
 offset
+
+
+
+Context: User có nhiều bài post, 1 bài post có nhiều comment, 1 bài post có 1 column là lượt like (like_nụm)
+1. Làm sao lấy ra tất cả User có post
+2. Làm sao lấy ra tất cả User có hoặc không có post đều đc
+3. Lấy tất cả User có bài post có like_nụm > 2
+4. User.all.each do |u|
+  puts u.posts
+end
+
+--> N + 1 query
+Gỉai thích + Giải pháp
+
+User.all.each do |u|
+  u.posts.each do |p|
+    puts p.comments
+  end
+end
+
+--> N*M + 1 query
+Gỉai thích + Giải pháp
+
+5. Cùng ngữ cảnh câu 4. Làm sao include được các bài post có like_nụm > 2
+
+Trường hợp query trả về Array/nil/ActiveRelation/ActiveRelation nil
