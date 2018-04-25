@@ -210,16 +210,19 @@ offset
 
 
 
-Context: User có nhiều bài post, 1 bài post có nhiều comment, 1 bài post có 1 column là lượt like (like_nụm)
-1. Làm sao lấy ra tất cả User có post
-2. Làm sao lấy ra tất cả User có hoặc không có post đều đc
-3. Lấy tất cả User có bài post có like_nụm > 2
+Context: User có nhiều bài post, 1 bài post có nhiều comment, 1 bài post có 1 column là lượt like (like_num)
+1. Làm sao lấy ra tất cả User có post                       User.joins(:posts)
+2. Làm sao lấy ra tất cả User có hoặc không có post đều đc  User.left_outer_joins(:posts)
+3. Lấy tất cả User có bài post có like_num > 2              User.joins(:posts).where("posts.like_num > 2")
 4. User.all.each do |u|
   puts u.posts
 end
 
 --> N + 1 query
 Gỉai thích + Giải pháp
+  Query ra tất cả user sau đó lấy ra các post của từng user đó
+  => Dùng eager load : User.includes(:posts)
+
 
 User.all.each do |u|
   u.posts.each do |p|
@@ -229,7 +232,10 @@ end
 
 --> N*M + 1 query
 Gỉai thích + Giải pháp
+Đầu tiên query ra tất cả user sau đó ở từng object user query ra tất cả các post rồi tiếp tục query để puts được các comment trong từng post
+=> Dùng eager load : User.includes(post: :comments)
 
-5. Cùng ngữ cảnh câu 4. Làm sao include được các bài post có like_nụm > 2
+5. Cùng ngữ cảnh câu 4. Làm sao include được các bài post có like_num > 2
+=> User.includes(:posts).where("posts.like_num > 2").references(:posts)
 
 Trường hợp query trả về Array/nil/ActiveRelation/ActiveRelation nil
