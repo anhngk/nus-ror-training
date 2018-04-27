@@ -99,11 +99,20 @@ end
 
 Association:
 
+LƯU Ý:
+
+//////////
+- Với belongs_to : Khi thực hiện một thay đổi => phải call save mới thực hiện (a.user = User.find(1) => a.save)
+- Với các mối quan hệ khác : Thay đối => autosave (u.accounts << Account.find(2))
+//////////
+
 has_many through: tạo ra một bảng trung gian khi liên kết giữa hai model
 has_and_belongs_to liên kết trực tiếp hai model
 
 Sử dụng has_many through: khi cần nơi để xử lý data trên dữ liệu liên kết giữa hai model/validation
 Sử dụng has_and_belongs_to_many khi cần gọn nhẹ, quy mô nhỏ, không xử lý nhiều
+
+Conditions: where/extending/group/include/limit/offset/order/readonly/select/distinct
 
 class User < ApplicationRecord
  has_many :posts
@@ -163,7 +172,7 @@ nullify : set foreign_key thành NULL, callback không thể thực hiện
 restrict_with_exception : raise một exception khi tồn tại bất cứ asscociated record
 restrict_with_error : nếu có record liên kết, sẽ thêm một error cho người sở hữu
 
-assemblies_parts
+assemblies_parts => thứ tự theo alphabet
 
 class Assembly < ApplicationRecord
 has_and_belongs_to_many :parts, join_table: this_is_the_name
@@ -174,6 +183,31 @@ has_and_belongs_to_many :assemblies, join_table: this_is_the_name
 end
 end
 
+class Employee < ApplicationRecord
+  has_many :subordinates, class_name: "Employee", foreign_key: "manager_id"
+
+  belongs_to :manager, class_name: "Employee"
+end
+
+Quan hệ polymorphic :
+
+  Define
+
+  class Image < ...
+    belongs_to :imageable, polymorphic: true
+  end
+
+  class User < ...
+    has_many: :images, as: :imageable
+  end
+
+  Trong file migrate thêm refernce
+    t.references :imageable, polymorphic: true, index: true
+
+  Database thêm 2 field
+    imageable_type : tên model sử dụng
+    imageable_id : id của instance sở hữu
+
 ----------------------------
 
   Callbacks:
@@ -182,7 +216,7 @@ end
 - Không có hàm nào chạy callback nhưng không validation
 - Hủy các callback : throw(:abort)
 - Callback chạy khi khởi tạo một ActiveRecord object : after_initialize
--
+- Lưu ý Transaction Callbacks
 
 ----------------------------
 
@@ -239,3 +273,81 @@ Gỉai thích + Giải pháp
 => User.includes(:posts).where("posts.like_num > 2").references(:posts)
 
 Trường hợp query trả về Array/nil/ActiveRelation/ActiveRelation nil
+
+-----------------------------
+
+  Routing:
+
+- index / show / edit / new / create / update / destroy
+
+- index (GET - /photos/)
+- new (GET - /photos/new)
+- edit (GET - /photos/:id/edit)
+- update (PATCH/PUT - /photos/:id)
+- create (POST - /photos)
+- show (GET - /photos/:id)
+- destroy (DELETE - /photos/:id)
+
+Route /articles (without the prefix /admin)
+
+scope module: 'admin' do
+  resources :articles, :comments
+end
+
+or single case
+  resources :articles, module: 'admin'
+
+scope '/admin' do
+  resources :articles, :comments
+end
+
+or resources: :articles, path: '/admin/articles'
+
+- Shallow nesting :
+
+    resources :articles, shallow: true do
+      resources :comments
+      resources :quotes
+      resources :drafts
+    end
+
+- shallow_path => path
+- shallow_prefix => helper
+
+Adding member routes
+  resources :photos do
+    member do
+      get 'preview'
+    end
+  end
+
+- Redirection
+
+  get '/stories', to: redirect('/articles')
+
+Nested resource dùng để làm gì? => Khai báo đường dẫn cho các asociation
+Theo đề nghị của Rails Guide thì chúng ta nên limit nested resource ở level thứ mấy (nên sử dụng bao nhiêu “resources” lồng nhau)? => Level 1, chỉ một resources lồng trong 1 resources khác
+
+
+resources :posts do
+  resources :comments
+end
+
+GET /posts/:post_id/comments post_comments_path
+PATCH/PUT /post/:post_id/comments/:id  post_comments_path(:id)
+
+get 'exit', to: 'sessions#destroy' => sẽ gọi đến sessions#destroy khi nhận được url /exit
+get 'exit', to: 'sessions#destroy', as: :logout => tạo ra 2 helper logout_path và logout_url, gọi logout_path sẽ trả về /exit
+
+match 'exit',  to: 'user#logout',  via: [:get, :post, :patch]
+
+-------------------------------
+
+  Controller:
+
+- 2 kinds of parameter :
+  + Query string parameters : everything after "?" in the URL
+  + POST data
+
+@post = Post.create(user_id = @user.id)
+post = Post.where(user_id: 5)
