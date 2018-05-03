@@ -1,6 +1,8 @@
 Association:
 
-LƯU Ý:
+LƯU Ý :
+
+:source tương tự như :class_name nhưng sử dụng với mqh has_many/has_one through: và có class_name khác nhau
 
 //////////
 - Với belongs_to : Khi thực hiện một thay đổi => phải call save mới thực hiện (a.user = User.find(1) => a.save)
@@ -108,3 +110,25 @@ Quan hệ polymorphic :
   Database thêm 2 field
     imageable_type : tên model sử dụng
     imageable_id : id của instance sở hữu
+
+
+Association Reference :
+
+1.  belongs_to
+ -  association (@author = @book.author) trả về association object, nếu không có trả về nil
+
+ -  reload_association (@author = @book.reload_author) nếu association object đã được gọi từ database, thông tin lưu trong cached sẽ được gọi. Nếu muốn reload lại => gọi reload_asociation
+
+ -  association = (associate) (@book.author = @author) Sẽ gán đối tượng @author cho @book.author. Lấy primary key của @author gán cho foreign_key của @book
+
+ -  build_association(attributes={}) (@author = @book.build_author(author_number: 123, author_name: "John ABC")) build_association trả về một object mới của author, được khỏi tạo với các tham số truyền vào, cũng như thiết lập foreign_key nhưng object vẫn chưa được save
+
+ -  create_association (@author = @book.create_author(author_number: 123,
+                                   author_name: "John Doe"))
+    tương tự build nhưng nếu pass tất cả validation => save
+
+ -  create_association! (attributes = {}) => Thực hiện tương tự như create_association nhưng raises ActiveRecord::RecordInvalid nếu record invalid
+
+ :autosave
+ :class_name
+ :counter_cache cache lại counter của object
