@@ -104,7 +104,7 @@ Quan hệ polymorphic :
     has_many: :images, as: :imageable
   end
 
-  Trong file migrate thêm refernce
+  Trong file migrate thêm reference
     t.references :imageable, polymorphic: true, index: true
 
   Database thêm 2 field
@@ -117,7 +117,7 @@ Association Reference :
 1.  belongs_to
  -  association (@author = @book.author) trả về association object, nếu không có trả về nil
 
- -  reload_association (@author = @book.reload_author) nếu association object đã được gọi từ database, thông tin lưu trong cached sẽ được gọi. Nếu muốn reload lại => gọi reload_asociation
+ -  reload_association (@author = @book.reload_author) nếu association object đã được gọi từ database, thông tin lưu trong cached sẽ được gọi. Nếu muốn reload lại => gọi reload_association
 
  -  association = (associate) (@book.author = @author) Sẽ gán đối tượng @author cho @book.author. Lấy primary key của @author gán cho foreign_key của @book
 
@@ -132,3 +132,6 @@ Association Reference :
  :autosave
  :class_name
  :counter_cache cache lại counter của object
+
+
+ has_one :account, class_name: "MyApplication::Billing::Account"

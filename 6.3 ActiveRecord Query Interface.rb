@@ -1,5 +1,16 @@
   QueryInterface:
 
+reorder / reverse_order
+
+Sự khác biệt giữa User.find([1,2]) và User.where id:[1,2] là
+- User.find([1,2]) => Raise exception RecordNotFound
+- User.where id:[1,2] => ActiveRecord::Relation Array rỗng
+
+Sự khác biệt giữa User.all / User.find_each / User.find_in_batches
+- User.all Load tất cả các User lên cùng lúc
+- User.find_each Load lần lượt các batches user theo 1 batch_size, truyền lần lượt từng user trong batch vào block
+- User.find_in_batches Load lần lượt các batches user theo 1 batch_size, truyền nguyên user_batch vào block
+
 Class Product < ApplicationRecord
  scope :active { where(active: true) }
 end
@@ -24,7 +35,7 @@ offset
 
 Context: User có nhiều bài post, 1 bài post có nhiều comment, 1 bài post có 1 column là lượt like (like_num)
 1. Làm sao lấy ra tất cả User có post                       User.joins(:posts)
-2. Làm sao lấy ra tất cả User có hoặc không có post đều đc  User.left_outer_joins(:posts)
+2. Làm sao lấy ra tất cả User có hoặc không có post đều đc  User.all / User.includes(:posts)
 3. Lấy tất cả User có bài post có like_num > 2              User.joins(:posts).where("posts.like_num > 2")
 4. User.all.each do |u|
   puts u.posts
@@ -35,6 +46,12 @@ Gỉai thích + Giải pháp
   Query ra tất cả user sau đó lấy ra các post của từng user đó
   => Dùng eager load : User.includes(:posts)
 
+//////////
+  @users = User.includes(:posts)
+  @users.each do |u|
+    puts u.posts
+  end
+//////////
 
 User.all.each do |u|
   u.posts.each do |p|
@@ -45,76 +62,87 @@ end
 --> N*M + 1 query
 Gỉai thích + Giải pháp
 Đầu tiên query ra tất cả user sau đó ở từng object user query ra tất cả các post rồi tiếp tục query để puts được các comment trong từng post
-=> Dùng eager load : User.includes(post: :comments)
+=> Dùng eager load : User.includes(posts: :comments)
+//////////
+  @users = User.includes(posts: :comments)
+  @users.each do |u|
+    u.posts.each do |p|
+      puts p.comments
+    end
+  end
+//////////
 
 5. Cùng ngữ cảnh câu 4. Làm sao include được các bài post có like_num > 2
 => User.includes(:posts).where("posts.like_num > 2").references(:posts)
 
 Trường hợp query trả về Array/nil/ActiveRelation/ActiveRelation nil
 
------------------------------
 
-  Routing:
+Scope:
 
-- index / show / edit / new / create / update / destroy
-
-- index (GET - /photos/)
-- new (GET - /photos/new)
-- edit (GET - /photos/:id/edit)
-- update (PATCH/PUT - /photos/:id)
-- create (POST - /photos)
-- show (GET - /photos/:id)
-- destroy (DELETE - /photos/:id)
-
-Route /articles (without the prefix /admin)
-
-scope module: 'admin' do
-  resources :articles, :comments
+class Article < ApplicationRecord
+  scope :published, -> {where( published: true )}
+  scope :created_before, -> (time) { where("created_at < ?", time) if time.present? }
+  default_scope { where( active: true )}
 end
 
-or single case
-  resources :articles, module: 'admin'
 
-scope '/admin' do
-  resources :articles, :comments
+def self.created_before(time)
+  where("created_at < ?", time)
 end
 
-or resources: :articles, path: '/admin/articles'
-
-- Shallow nesting :
-
-    resources :articles, shallow: true do
-      resources :comments
-      resources :quotes
-      resources :drafts
-    end
-
-- shallow_path => path
-- shallow_prefix => helper
-
-Adding member routes
-  resources :photos do
-    member do
-      get 'preview'
-    end
-  end
-
-- Redirection
-
-  get '/stories', to: redirect('/articles')
-
-Nested resource dùng để làm gì? => Khai báo đường dẫn cho các asociation
-Theo đề nghị của Rails Guide thì chúng ta nên limit nested resource ở level thứ mấy (nên sử dụng bao nhiêu “resources” lồng nhau)? => Level 1, chỉ một resources lồng trong 1 resources khác
-
-
-resources :posts do
-  resources :comments
+resources :users do
+  resources :posts
 end
 
-GET /posts/:post_id/comments post_comments_path
-PATCH/PUT /post/:post_id/comments/:id  post_comments_path(:id)
+find_or_create_by()
+create_with().find_or_create_by()
 
-get 'exit', to: 'sessions#destroy' => sẽ gọi đến sessions#destroy khi nhận được url /exit
-get 'exit', to: 'sessions#destroy', as: :logout => tạo ra 2 helper logout_path và logout_url, gọi logout_path sẽ trả về /exit
+class Article < ApplicationRecord
+  scope :published, -> { where(published: true) }
+  default_scope { where (active: true )}
+  scope :created_before, ->(time) {where("created_at < ?", time)}
+end
 
-match 'exit',  to: 'user#logout',  via: [:get, :post, :patch]
+Conditions
+
+- Pure String Conditions
+  Client.where("order_count='2'")
+
+- Array Conditions
+  Client.where("orders_count=?", params[:order])
+  Client.where("orders_count= ? AND status = ?", params[:orders], params[:status])
+
+- Placeholder Conditions
+  Client.where("created_at >= :start_date AND created_at <= :end_date",{start_date: params[:start_date], end_date: params[:end_date]})
+
+- Hash Conditions
+  Client.where('locked' => true)
+  Client.where(locked: true)
+  Client.where(created_at: (Time.now.midnight - 1.day)..Time.now.midnight)
+  Client.where(orders_count: [1,4,6])
+
+- Not Conditions
+  Client.where.not(locked: true)
+
+- Or Conditions
+  Clients.where(locked: true).or(Clients.where(orders_count: [5,6]))
+
+
+---------------------------
+
+Array conditions
+
+Client.where("orders_count = ?", params[:order])
+Client.where("privacy = ? AND status = ?", params[:privacy], params[:status])
+
+Hash conditions
+
+Client.where(active: true)
+Client.where('active' => true)
+Client.where(orders_count: [32,43,55])
+
+String conditions
+Client.where("orders_count >= '2'")
+Client.where("orders_count >= #{params[:orders]}")
+

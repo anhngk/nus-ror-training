@@ -10,6 +10,35 @@
 - show (GET - /photos/:id)
 - destroy (DELETE - /photos/:id)
 
+Định nghĩa RESTful?
+
+Resource có id => member
+resources :users do
+  member do
+    get 'like'
+  end
+end
+
+OR
+
+resources :photos do
+  get 'preview', on: :member
+end
+
+Resource không id => collection
+
+resources :photos do
+  collection do
+    get 'search'
+  end
+end
+
+OR
+
+resources :photos do
+  get 'search', on: :collection
+end
+
 Route /articles (without the prefix /admin)
 
 scope module: 'admin' do
@@ -23,7 +52,7 @@ scope '/admin' do
   resources :articles, :comments
 end
 
-or resources: :articles, path: '/admin/articles'
+or resources :articles, path: '/admin/articles'
 
 - Shallow nesting :
 
@@ -47,7 +76,7 @@ Adding member routes
 
   get '/stories', to: redirect('/articles')
 
-Nested resource dùng để làm gì? => Khai báo đường dẫn cho các asociation
+Nested resource dùng để làm gì? => Khai báo đường dẫn cho các association
 Theo đề nghị của Rails Guide thì chúng ta nên limit nested resource ở level thứ mấy (nên sử dụng bao nhiêu “resources” lồng nhau)? => Level 1, chỉ một resources lồng trong 1 resources khác
 
 
@@ -62,3 +91,71 @@ get 'exit', to: 'sessions#destroy' => sẽ gọi đến sessions#destroy khi nh�
 get 'exit', to: 'sessions#destroy', as: :logout => tạo ra 2 helper logout_path và logout_url, gọi logout_path sẽ trả về /exit
 
 match 'exit',  to: 'user#logout',  via: [:get, :post, :patch]
+
+
+Làm cách nào để ngăn chặn access các ip address nằm trong mảng sau bằng cách khai báo route ?
+[192.168.1.56, 424.235.42.22]
+Khi các ip address này request, sẽ được điều hướng sang controller commons, action not_permit
+
+Rails.application.routes.draw do
+  match '*path', to: 'commons#not_permit', via: :all,
+  constraint: lambda { |request| [192.168.1.56, 424.235.42.22].include?(request.remote_ip) }
+end
+
+  match '*path', to: 'commons#not_permit' via: :all,
+  constraint: lambda { |request| [192.168....].include?(request.remote_ip)}
+  constraint: lambda { |request| [192lll].include?(request.remote_ip)}
+
+  constraint: lambda { |request| [129.2232].include?(request.remote_ip)}
+  match '*path', to: 'commons#not_permit' via: :all
+
+
+resource :abc
+resolve('Abc') { [:abc] }
+
+scope '/admin' do
+  resource :articles, :comments
+end
+
+resources :articles, path: '/admin/articles'
+
+-------------------------
+
+GET /users/:user_id/posts 'posts#index' user_posts_path
+
+GET /users/:user_id/posts/:id 'posts#show' user_posts_path(:id)
+
+GET /users/:user_id/posts/:id/edit 'posts#edit' edit_user_posts_path(:id)
+
+GET /users/:user_id/posts/new 'posts#new' new_user_posts_path
+
+POST /users/:user_id/posts/ 'posts#create' user_posts_path
+
+PUT/PATCH /users/:user_id/posts/:id 'posts#update' user_posts_path(:id)
+
+DELETE /users/:user_id/posts/:id 'posts#destroy' users_posts_path(:id)
+
+
+
+root 'users#index'
+
+get 'users/:id/like/:post_id', to: 'users#like'
+
+resources :users do
+  member do
+    get 'like'
+  end
+end
+
+---------------------------------------
+
+resources :users, path: 'admin/users'
+resources :users, module: 'admin'
+
+1. admin/users => users
+
+resources :users, path: 'admin/users'
+
+2. /users => admin/users
+
+resources :users, module: 'admin'
