@@ -159,3 +159,103 @@ resources :users, path: 'admin/users'
 2. /users => admin/users
 
 resources :users, module: 'admin'
+
+
+---------------------------------------
+
+URL vs Path
+
+
+---------------------------------------
+
+admin/articles => /articles
+  Multiple case
+    scope module :admin do
+        resources :articles
+    end
+  Single case
+    resources :articles, module: 'admin'
+
+/admin/articles => ArticlesController without prefix
+  scope 'admin' do
+    resources :articles
+  end
+
+Single case => resources :articles, path: 'admin/articles' => admin/articles - articles#index - articles_path
+
+---------------------------------------
+
+/photos/1/preview => Add member route
+
+resources :photos do
+  member do
+    get 'preview'
+  end
+end
+
+resources :photos do
+  get 'preview', on: :member
+end
+
+/photos/search
+
+resoures :photos do
+  collection do
+    get 'search'
+  end
+end
+
+resources :photos do
+  get 'search', on: :collection
+end
+
+---------------------------------------
+
+/photos/new/preview
+
+resources :photos do
+  get 'preview', on: :new
+end
+
+---------------------------------------
+
+get '/photos(/:id)', to: :display
+
+---------------------------------------
+
+match '/photos', to: 'photos#index', via: [:get, :post]
+
+---------------------------------------
+
+match 'photos', to: 'photos#show', via: [:all]
+
+---------------------------------------
+
+Redirection
+
+get 'stories', to: redirect('/artiles')
+get 'stories/:name', to: redirect('/articles/%{name}')
+
+---------------------------------------
+
+resource :basket
+resolve ("Basket") {[:basket]}
+
+---------------------------------------
+
+Overriding the new and edit segments
+
+resources :photos, path_names: {new: 'make', edit: 'change'}
+
+Overrding named helper
+
+resources :photos, as: 'images'
+
+------------------------------------
+
+Translated paths
+
+scope (path_names: {new: new, edit:'bearbeiten'}) do
+  resources :categories, path: 'kategorien'
+end
+
