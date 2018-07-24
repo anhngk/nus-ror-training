@@ -1,6 +1,6 @@
 - Config remote URL : git config remote.<remote-name>.url
 
-- Replace local changes : git checkout --<file-name> 
+- Replace local changes : git checkout --<file-name>
 
 - Git rebase : Đường đi của nhánh - Đường thẳng
 - Git merge  : Đường đi của nhánh - Phân nhánh
@@ -11,7 +11,7 @@
 - 'git push' : Push tất cả những thay đổi ở local repo lên Github
 - 'git pull' : Chỉ pull những thay đổi từ branch hiện tại
 
-- Context: branches(master, login), standing on branch login	
+- Context: branches(master, login), standing on branch login
 	+ (login) pull code từ branch master ở remote origin : git pull origin master
 	+ (login) merge code từ branch master ở local repo : git merge master
 	+ (login) push thẳng từ branch login lên branch master ở remote : git push origin login:master
@@ -25,3 +25,4 @@
 - git remote rm <name>
 
 
+- Back lai nhung file da commit :  git reset HEAD~1
